@@ -1,5 +1,6 @@
 # server.py
 import asyncio
+import os
 import websockets
 
 clients = set()
@@ -20,8 +21,11 @@ async def handler(websocket):
         print(f"Client disconnected: {websocket.remote_address}")
 
 async def main():
-    async with websockets.serve(handler, "0.0.0.0", 8765):
-        print("WebSocket server running on port 8765")
+    # Use PORT from environment (for Render.com), default to 8765 if local
+    port = int(os.environ.get("PORT", 8765))
+    async with websockets.serve(handler, "0.0.0.0", port):
+        print(f"WebSocket server running on port {port}")
         await asyncio.Future()  # run forever
 
 asyncio.run(main())
+
